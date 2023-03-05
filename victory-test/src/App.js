@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { VictoryBar, VictoryChart, VictoryAxis, VictoryTheme, VictoryStack } from 'victory';
+import { VictoryBar, VictoryChart, VictoryAxis, VictoryTheme, VictoryStack, VictoryLabel } from 'victory';
 
 const data2012 = [
   {quarter: 1, earnings: 13000},
@@ -30,11 +30,25 @@ const data2015 = [
   {quarter: 4, earnings: 12000}
 ];
 
-const characterData = [
-  { strength: 1, intelligence: 250, luck: 1, stealth: 40, charisma: 50 },
-  { strength: 2, intelligence: 300, luck: 2, stealth: 80, charisma: 90 },
-  { strength: 5, intelligence: 225, luck: 3, stealth: 60, charisma: 120 }
+const dataA = [
+  { x: "Personal Drones", y: 57 },
+  { x: "Smart Thermostat", y: 40 },
+  { x: "Television", y: 38 },
+  { x: "Smartwatch", y: 37 },
+  { x: "Fitness Monitor", y: 25 },
+  { x: "Tablet", y: 19 },
+  { x: "Camera", y: 15 },
+  { x: "Laptop", y: 13 },
+  { x: "Phone", y: 12 }
 ];
+
+const dataB = dataA.map((point) => {
+  const y = Math.round(point.y + 3 * (Math.random() - 0.5));
+  return { ...point, y };
+});
+
+const width = 400;
+const height = 400;
 
 
 
@@ -44,7 +58,7 @@ function App() {
   return (
     <div className="App">
       <h1>Victory Graph Test</h1>
-      <VictoryChart
+      <VictoryChart 
         domainPadding={20}
         theme={VictoryTheme.material}
       >
@@ -79,6 +93,48 @@ function App() {
           />
         </VictoryStack>
       </VictoryChart>
+ 
+      <VictoryChart horizontal
+        height={height}
+        width={width}
+        padding={40}
+      >
+        <VictoryStack
+          style={{ data: { width: 25 }, labels: { fontSize: 15 } }}
+        >
+          <VictoryBar
+            style={{ data: { fill: "tomato" } }}
+            data={dataA}
+            y={(data) => (-Math.abs(data.y))}
+            labels={({ datum }) => (`${Math.abs(datum.y)}%`)}
+          />
+          <VictoryBar
+            style={{ data: { fill: "orange" } }}
+            data={dataB}
+            labels={({ datum }) => (`${Math.abs(datum.y)}%`)}
+          />
+        </VictoryStack>
+        <VictoryAxis
+          style={{
+            axis: { stroke: "transparent" },
+            ticks: { stroke: "transparent" },
+            tickLabels: { fontSize: 15, fill: "black" }
+          }}
+          /*
+            Use a custom tickLabelComponent with
+            an absolutely positioned x value to position
+            your tick labels in the center of the chart. The correct
+            y values are still provided by VictoryAxis for each tick
+          */
+            tickLabelComponent={
+              <VictoryLabel
+                x={width / 2}
+                textAnchor="middle"
+              />
+            }
+            tickValues={dataA.map((point) => point.x).reverse()}
+          />
+        </VictoryChart>
     </div>
   );
 }
